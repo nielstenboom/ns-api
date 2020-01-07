@@ -1,6 +1,6 @@
 from setuptools import setup
 
-import ns
+import nsapi
 
 
 def readme():
@@ -8,8 +8,8 @@ def readme():
         return f.read()
 
 
-setup(name='ns-api',
-      version=ns.__version__,
+setup(name='nsapi',
+      version=nsapi.__version__,
       description='Wrapper for the NS api',
       long_description=readme(),
       long_description_content_type='text/markdown',
@@ -23,7 +23,7 @@ setup(name='ns-api',
       url='http://github.com/Shiqan/ns-api',
       author='Shiqan',
       license='MIT',
-      packages=['ns'],
+      packages=['nsapi'],
       install_requires=[
           'aiohttp',
           'dataclasses-json',

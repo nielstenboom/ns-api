@@ -4,7 +4,7 @@ import requests
 import asyncio
 import aiohttp
 
-from ns.models import Arrival, Departure, Disruption, Station, Trip, PriceOption
+from .models import Arrival, Departure, Disruption, Station, Trip, PriceOption
 
 class NSBase():
     base_url = 'https://gateway.apiportal.ns.nl/public-'
