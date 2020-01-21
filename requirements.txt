@@ -7,9 +7,6 @@ aiohttp == 3.5.4
 # src/nsapi/models.py: 2
 dataclasses_json == 0.3.7
 
-# src/app.py: 11
-nsapi == 0.0.1
-
 # src/app.py: 3
 pandas == 0.25.2
 
