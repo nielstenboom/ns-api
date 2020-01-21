@@ -58,7 +58,7 @@ class NSAPI(NSBase):
         """ Departure times for a specified station. Either the UIC code or station is required """
         # https://gateway.apiportal.ns.nl/public-reisinformatie/api/v2/departures[?dateTime][&maxJourneys][&lang][&station][&uicCode][&source]
         response = self._request(self._route('reisinformatie', 'api', 'v2', 'departures'), params = params)
-        return self._convert(response['payload']['departures'],  model = Departure)
+        return response['payload']['departures']
 
     def get_disruption(self, id: str) -> Disruption:
         """ Specific disruption/maintenance """
@@ -82,13 +82,13 @@ class NSAPI(NSBase):
         """ Reconstruct a trip if possible using the given reconCtx (representation of a trip found in a travel advice) """
         # https://gateway.apiportal.ns.nl/public-reisinformatie/api/v3/trips/trip?ctxRecon={ctxRecon}[&date][&lang][&product][&travelClass][&discount][&travelRequestType]
         response = self._request(self._route('reisinformatie', 'api', 'v3', 'trips', 'trip'), params = {'ctxRecon': ctx_recon, **params})
-        return self._convert(response['payload'], model = Trip)
+        return response
 
     def get_trips(self, **params) -> List[Trip]:
         """ Searches for a travel advice with the specified options between the possible backends (HARP, 9292 or PAS/AVG) """
         # https://gateway.apiportal.ns.nl/public-reisinformatie/api/v3/trips[?originLat][&originLng][&destinationLat][&destinationLng][&viaLat][&viaLng][&viaWaitTime][&dateTime][&searchForArrival][&previousAdvices][&nextAdvices][&context][&addChangeTime][&lang][&polylines][&fromZip][&toZip][&travelMethodFrom][&travelMethodTo][&product][&travelClass][&discount][&productStationFrom][&productStationTo][&yearCard][&originTransit][&originWalk][&originBike][&originCar][&originName][&travelAssistanceTransferTime][&searchForAccessibleTrip][&destinationTransit][&destinationWalk][&destinationBike][&destinationCar][&destinationName][&accessibilityEquipment1][&accessibilityEquipment2][&excludeHighSpeedTrains][&excludeReservationRequired][&passing][&travelRequestType][&originEVACode][&destinationEVACode][&viaEVACode][&shorterChange][&fromStation][&toStation][&originUicCode][&destinationUicCode][&viaUicCode][&bikeCarriageRequired][&viaStation][&departure][&minimalChangeTime]
         response = self._request(self._route('reisinformatie', 'api', 'v3', 'trips'), params = params)
-        return self._convert(response['trips'], model = Trip)
+        return response['trips']
 
     def get_trip_price(self, from_station: str, to_station: str,**params) -> List[PriceOption]:
         """ Returns a list of price options for the requested trip."""

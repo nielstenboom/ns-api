@@ -1,0 +1,5 @@
+aiohttp
+dataclasses-json
+requests
+flask
+pushbullet
