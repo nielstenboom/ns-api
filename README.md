@@ -23,7 +23,7 @@ You will get a notification if in the next 20 minutes a scheduled leg of your tr
 
 For this script to be useful it should be scheduled via a cronjob or other task scheduler to run every x minutes on a machine that is always online.
 
-Example cron rule with simple logging:
+Example cron rule that runs the script every 5 minutes with simple logging:
 ```
 */5 * * * Mon,Tue,Thu (date; cd /root/ns-delay-notifier; python3.7 src/app.py;) >> /root/ns-delay-notifier/modifier.log
 ```
