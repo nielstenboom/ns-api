@@ -16,8 +16,10 @@ pip install -r requirements.txt
 And then the script can be called with
 
 ```
-python src/app .py
+python src/app.py
 ```
+
+You will get a notification if in the next 20 minutes a scheduled leg of your trip has a delay.
 
 For this script to be useful it should be scheduled via a cronjob or other task scheduler to run every x minutes on a machine that is always online.
 
