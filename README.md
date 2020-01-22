@@ -6,7 +6,7 @@ This is a small script to notify you on your phone via a pushbullet notification
 
 Fill in all the legs of your journey in [trips.csv](trips.csv), be sure you type the EXACT name of the station and times it shows on the NS-app or website, it will not work properly otherwise.
 
-Then get a NS-API key and a Pushbullet API key and fill these in the .env.dist file and rename it to .env 
+Then get a [NS-API key](https://apiportal.ns.nl/products/PublicNsApi) and a [Pushbullet API key](https://www.pushbullet.com/) (and install the Pushbullet app on your phone ofcourse) and fill these in the .env.dist file and rename it to .env 
 
 Then install the requirements
 ```
