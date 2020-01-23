@@ -91,10 +91,10 @@ trips = pd.read_csv("trips.csv").to_dict('records')
 # list of the same trips but these are ns-objects
 trips_parsed = parse_upcoming_trips(trips, 30)
 
-for trip_parsed, trip in zip(trips_parsed, trips):
-    if has_delays(trip_parsed):
-        start = trip["station_origin"]
-        end = trip["station_destination"]
+for trip in trips_parsed:
+    if has_delays(trip):
+        start = trip["legs"][0]["origin"]["name"]
+        end = trip["legs"][0]["destination"]["name"]
 
         print(f"Delay on {start} - {end}")
         pb.push_note("Delay!", f"There is a delay on the trip {start} - {end}")
