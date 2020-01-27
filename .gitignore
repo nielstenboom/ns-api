@@ -141,3 +141,4 @@ pip-selfcheck.json
 # ignore debugging files
 ./__init__.py
 main.py
+notifications.p
