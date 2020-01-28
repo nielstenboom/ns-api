@@ -1,10 +1,12 @@
 ## NS Delay Notifier
 
-This is a small script to notify you on your phone via a pushbullet notification if your usual train commute trips have delays.
+If the train that you take everyday is delayed or cancelled, you'd like to know of course. Unfortunately the NS-app only has this functionality for iOS users. This script is designed to help out fellow Android users!
+
+It is a small python script that monitors the NS-api to notify you on your phone via a pushbullet notification if your usual train commute trips have delays.
 
 ### Setup
 
-Fill in all the legs (so not just the end to end stations, fill in all the sub trips) of your journey in [trips.csv](trips.csv), be sure you type the EXACT name of the station and times it shows on the NS-app or website, it will not work properly otherwise.
+Fill in all the legs (so NOT just the end-to-end stations, fill in ALL the sub trips!) of your journey in [trips.csv](trips.csv), be sure you type the EXACT name of the station and times it shows on the NS-app or website, it will not work properly otherwise.
 
 Then get a [NS-API key](https://apiportal.ns.nl/products/PublicNsApi) and a [Pushbullet API key](https://www.pushbullet.com/) (and install the Pushbullet app on your phone ofcourse) and fill these in the .env.dist file and rename it to .env 
 
