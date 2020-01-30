@@ -21,6 +21,41 @@ trips_parsed = []
 # list of trips defined in trips.csv
 trips = pd.read_csv("trips.csv").to_dict('records')
 
+
+def get_notifications_dict():
+    """
+    Gets or creates the notifications dictionary that saves if a notification 
+    has been sent before today.
+    
+    Returns:
+        dict: The dictionary containing the trips as keys plus a 'day' key that has the
+        day of the month the last time the notification was sent.
+              
+    """
+    result = None
+    
+    # load if it exists
+    if os.path.isfile(fn_notifications_dict):
+        with open(fn_notifications_dict, 'rb') as handle:
+            result = pickle.load(handle)
+    
+    # else create it and save it as a pickle file
+    else: 
+        result = {}
+        for trip in trips:
+            result[trip["station_origin"]+trip["station_destination"]] = {}
+            result[trip["station_origin"]+trip["station_destination"]]["delay"] = -1
+            result[trip["station_origin"]+trip["station_destination"]]["trackchange"] = -1
+
+
+        with open(fn_notifications_dict, 'wb') as handle:
+            pickle.dump(result, handle)
+    
+    return result
+
+# get the dictionary that keeps track if a notification has been sent already.
+notifications = get_notifications_dict()
+
 def get_station_uic(station_name):
     """
     Given a station name, return its uic, by searching in the stations list
@@ -71,9 +106,9 @@ def parse_upcoming_trips(trips, minutes_delta):
         arrive = dt_arrive.strftime("%Y-%m-%dT%H:%M:%S+01:00")
 
         # only notify if time is minutes_delta minutes from now or less
-        if  0 < diff_start < minutes_delta or 0 < diff_end < minutes_delta:
-            trip_parsed = get_ns_trip(station_start_uic, station_end_uic, start, arrive)
-            result.append(trip_parsed)
+        # if  0 < diff_start < minutes_delta or 0 < diff_end < minutes_delta:
+        trip_parsed = get_ns_trip(station_start_uic, station_end_uic, start, arrive)
+        result.append(trip_parsed)
 
     return result
 
@@ -91,35 +126,6 @@ def has_delays(trip):
     return not result
 
 
-def get_notifications_dict():
-    """
-    Gets or creates the notifications dictionary that saves if a notification 
-    has been sent before today.
-    
-    Returns:
-        dict: The dictionary containing the trips as keys plus a 'day' key that has the
-        day of the month the last time the notification was sent.
-              
-    """
-    result = None
-    
-    # load if it exists
-    if os.path.isfile(fn_notifications_dict):
-        with open(fn_notifications_dict, 'rb') as handle:
-            result = pickle.load(handle)
-    
-    # else create it and save it as a pickle file
-    else: 
-        result = {}
-        for trip in trips:
-            result[trip["station_origin"]+trip["station_destination"]] = {}
-            result[trip["station_origin"]+trip["station_destination"]]["day"] = -1
-
-        with open(fn_notifications_dict, 'wb') as handle:
-            pickle.dump(result, handle)
-    
-    return result
-
 def save_notifications_dict(notifications):
     """
     Saves a new version of the notifications dict to a pickle file.
@@ -129,26 +135,41 @@ def save_notifications_dict(notifications):
     """
     with open(fn_notifications_dict, 'wb') as handle:
         pickle.dump(notifications, handle)
-        
+
+def already_notified_today(start, end, mode, current_day_of_month):
+    result = notifications[start+end][mode] == current_day_of_month
+
+    if not result:
+        # save current day of month in new notifications dict
+        notifications[start+end][mode] = current_day_of_month
+        save_notifications_dict(notifications)
+
+    return result
+
+
 # list of the same trips but these are ns-objects
 trips_parsed = parse_upcoming_trips(trips, 30)
-# get the dictionary that keeps track if a notification has been sent already.
-notifications = get_notifications_dict()
 
-# loop through the parsed trips and see if there are any delays,
+# loop through the parsed trips and see if there are any delays or track changes
 # if yes, push a message
 for trip in trips_parsed:
-    if has_delays(trip):
-        start = trip["legs"][0]["origin"]["name"]
-        end = trip["legs"][0]["destination"]["name"]
-        current_day_of_month = datetime.datetime.today().day
 
+    start = trip["legs"][0]["origin"]["name"]
+    end = trip["legs"][0]["destination"]["name"]
+    current_day_of_month = datetime.datetime.today().day
+
+    # if a trip has a delay
+    if has_delays(trip):
         # if there was no notification of this yet today, then push it to pushbullet
-        if notifications[start+end]["day"] != current_day_of_month:
+        if not already_notified_today(start, end, "delay", current_day_of_month):
             print(f"Delay on {start} - {end}")
             pb.push_note("Delay!", f"There is a delay on the trip {start} - {end}")
 
-            # save current day of month in new notifications dict
-            notifications[start+end]["day"] = current_day_of_month
-            save_notifications_dict(notifications)
+    # if the trip will start on a different track (spoor)
+    if trip["status"] == "REPLACEMENT":
+        if not already_notified_today(start, end, "trackchange", current_day_of_month):
+
+            print(f"Different track on {start} - {end}")
+            pb.push_note("Track change!", f"There is a track change on the trip {start} - {end}")
+
 print("successful run")
