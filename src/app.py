@@ -106,9 +106,9 @@ def parse_upcoming_trips(trips, minutes_delta):
         arrive = dt_arrive.strftime("%Y-%m-%dT%H:%M:%S+01:00")
 
         # only notify if time is minutes_delta minutes from now or less
-        # if  0 < diff_start < minutes_delta or 0 < diff_end < minutes_delta:
-        trip_parsed = get_ns_trip(station_start_uic, station_end_uic, start, arrive)
-        result.append(trip_parsed)
+        if  0 < diff_start < minutes_delta or 0 < diff_end < minutes_delta:
+            trip_parsed = get_ns_trip(station_start_uic, station_end_uic, start, arrive)
+            result.append(trip_parsed)
 
     return result
 
