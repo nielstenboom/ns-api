@@ -171,5 +171,11 @@ for trip in trips_parsed:
 
             print(f"Different track on {start} - {end}")
             pb.push_note("Track change!", f"There is a track change on the trip {start} - {end}")
+    
+    # if something else is going on, trip cancelled etc.
+    elif trip["status"] != "NORMAL":
+
+        print(f"Something going on, on {start} - {end}")
+        pb.push_note("Deviation!", f"Something is different on the trip {start} - {end}")
 
 print("successful run")
