@@ -137,6 +137,9 @@ def save_notifications_dict(notifications):
         pickle.dump(notifications, handle)
 
 def already_notified_today(start, end, mode, current_day_of_month):
+    if not mode in notifications[start+end]:
+        notifications[start+end][mode] = -1
+
     result = notifications[start+end][mode] == current_day_of_month
 
     if not result:
@@ -174,8 +177,9 @@ for trip in trips_parsed:
     
     # if something else is going on, trip cancelled etc.
     elif trip["status"] != "NORMAL":
+        if not already_notified_today(start, end, "deviation", current_day_of_month):
 
-        print(f"Something going on, on {start} - {end}")
-        pb.push_note("Deviation!", f"Something is different on the trip {start} - {end}")
+            print(f"Something going on, on {start} - {end}")
+            pb.push_note("Deviation!", f"Something is different on the trip {start} - {end}")
 
 print("successful run")
